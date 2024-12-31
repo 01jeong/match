@@ -21,7 +21,7 @@ export default async function PhotosPage({
               <div key={photo.id}>
                 <Image
                   width={300}
-                  height={200}
+                  height={300}
                   src={photo.url}
                   alt="Image of member"
                   className="object-cover aspect-square"
