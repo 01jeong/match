@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef } from "react"
 import usePresenceStore from "./usePresenceStore"
 import { Channel, Members } from "pusher-js"
 import { pusherClient } from "@/lib/pusher"
+import { updateLastActive } from "@/app/actions/memberActions"
 
 export const usePresenceChannel = () => {
   const {set, add, remove} = usePresenceStore((state) => ({
@@ -27,8 +29,9 @@ export const usePresenceChannel = () => {
   useEffect(() => {
     if (!channelRef.current) {
       channelRef.current = pusherClient.subscribe('presence-nm')
-      channelRef.current.bind('pusher:subscription_succeeded', (members: Members) => {
+      channelRef.current.bind('pusher:subscription_succeeded', async (members: Members) => {
         handleSetMembers(Object.keys(members.members))
+        await updateLastActive()
       })
       channelRef.current.bind('pusher:member_added', (member: Record<string, any>) => {
         handleAddMember(member.id)

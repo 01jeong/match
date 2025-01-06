@@ -19,7 +19,7 @@ const usePresenceStore = create<PresenceState>()(
         })),
       set: (ids) => set({ members: ids }),
     }),
-    { name: 'PresenceStore' }
+    { name: 'PresenceStoreDemo' }
   )
 );
 

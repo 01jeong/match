@@ -17,7 +17,7 @@ export default function Providers({
 }) {
   const isUnreadCountSet = useRef(false);
   const { updateUnreadCount } = useMessageStore((state) => ({
-    updateUnreadCount: state.updateUnreadCount,
+    updateUnreadCount: state.updateUnreadCount, // infinite loop?
   }));
 
   const setUnreadCount = useCallback(
