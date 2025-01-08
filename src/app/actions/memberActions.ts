@@ -14,7 +14,7 @@ export async function getMembers({
   pageSize = '12',
   withPhoto = 'true',
 }: GetMemberParams): Promise<PaginatedResponse<Member>> {
-  const userId = await getAuthUserId()
+  const userId = await getAuthUserId();
 
   const [minAge, maxAge] = ageRange.split(',');
   const currentDate = new Date();
@@ -23,10 +23,10 @@ export async function getMembers({
 
   const selectedGender = gender.split(',');
 
-  const page = parseInt(pageNumber)
-  const limit = parseInt(pageSize)
+  const page = parseInt(pageNumber);
+  const limit = parseInt(pageSize);
 
-  const skip = (page - 1) * limit
+  const skip = (page - 1) * limit;
 
   // let conditions = [
   //   {dateOfBirth: {gte: minDob}},
@@ -45,7 +45,7 @@ export async function getMembers({
           { dateOfBirth: { gte: minDob } },
           { dateOfBirth: { lte: maxDob } },
           { gender: { in: selectedGender } },
-          ...(withPhoto === 'true' ? [{image: {not: null}}] : [])
+          ...(withPhoto === 'true' ? [{ image: { not: null } }] : []),
         ],
         NOT: {
           userId,
@@ -72,8 +72,8 @@ export async function getMembers({
 
     return {
       items: members,
-      totalCount: count
-    }
+      totalCount: count,
+    };
   } catch (error) {
     console.log(error);
     throw error;
@@ -89,14 +89,20 @@ export async function getMemberByUserId(userId: string) {
 }
 
 export async function getMemberPhotosByUserId(userId: string) {
+  const currentUserId = await getAuthUserId();
+
   const member = await prisma.member.findUnique({
     where: { userId },
-    select: { photos: true },
+    select: {
+      photos: {
+        where: currentUserId === userId ? {} : { isApproved: true },
+      },
+    },
   });
 
   if (!member) return null;
 
-  return member.photos.map((p) => p) as Photo[];
+  return member.photos as Photo[];
 }
 
 export async function updateLastActive() {
