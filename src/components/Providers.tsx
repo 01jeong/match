@@ -20,7 +20,6 @@ export default function Providers({
   profileComplete: boolean;
 }) {
   const isUnreadCountSet = useRef(false);
-
   const { updateUnreadCount } = useMessageStore((state) => ({
     updateUnreadCount: state.updateUnreadCount,
   }));
