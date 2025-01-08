@@ -1,6 +1,6 @@
 'use server';
 
-import { messageSchema, MessageSchema } from '@/lib/schemas/messageSchema';
+import { MessageSchema, messageSchema } from '@/lib/schemas/messageSchema';
 import { ActionResult, MessageDto } from '@/types';
 import { getAuthUserId } from './authActions';
 import { prisma } from '@/lib/prisma';
@@ -101,12 +101,11 @@ export async function getMessageThread(recipientId: string) {
         readMessageIds
       );
     }
-
-    const messageToReturn = messages.map((message) =>
+    const messagesToReturn = messages.map((message) =>
       mapMessageToMessageDto(message)
     );
 
-    return { messages: messageToReturn, readCount };
+    return { messages: messagesToReturn, readCount };
   } catch (error) {
     console.log(error);
     throw error;
@@ -176,8 +175,16 @@ export async function deleteMessage(messageId: string, isOutbox: boolean) {
     const messagesToDelete = await prisma.message.findMany({
       where: {
         OR: [
-          { senderId: userId, senderDeleted: true, recipientDeleted: true },
-          { recipientId: userId, senderDeleted: true, recipientDeleted: true },
+          {
+            senderId: userId,
+            senderDeleted: true,
+            recipientDeleted: true,
+          },
+          {
+            recipientId: userId,
+            senderDeleted: true,
+            recipientDeleted: true,
+          },
         ],
       },
     });
