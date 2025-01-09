@@ -4,11 +4,8 @@ import { auth, signIn, signOut } from '@/auth';
 import { sendPasswordResetEmail, sendVerificationEmail } from '@/lib/mail';
 import { prisma } from '@/lib/prisma';
 import { LoginSchema } from '@/lib/schemas/loginSchema';
-import {
-  combinedRegisterSchema,
-  ProfileSchema,
-  RegisterSchema,
-} from '@/lib/schemas/RegisterSchema';
+import { combinedRegisterSchema, ProfileSchema, RegisterSchema } from '@/lib/schemas/RegisterSchema';
+
 import { generateToken, getTokenByToken } from '@/lib/tokens';
 import { ActionResult } from '@/types';
 import { TokenType, User } from '@prisma/client';
@@ -133,6 +130,7 @@ export async function registerUser(
 export async function getUserByEmail(email: string) {
   return prisma.user.findUnique({ where: { email } });
 }
+
 export async function getUserById(id: string) {
   return prisma.user.findUnique({ where: { id } });
 }
@@ -141,7 +139,7 @@ export async function getAuthUserId() {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId) throw new Error('Unauthorized');
+  if (!userId) throw new Error('Unauthorised');
 
   return userId;
 }
@@ -198,7 +196,7 @@ export async function generateResetPasswordEmail(
 
     return {
       status: 'success',
-      data: 'Password reset email has been sent. Please check your emails',
+      data: 'Password reset email has been sent.  Please check your emails',
     };
   } catch (error) {
     console.log(error);
@@ -238,26 +236,30 @@ export async function resetPassword(
       data: { passwordHash: hashedPassword },
     });
 
-    await prisma.token.delete({ where: { id: existingToken.id } });
+    await prisma.token.delete({
+      where: { id: existingToken.id },
+    });
 
     return {
       status: 'success',
-      data: 'Password updated successfully. Please try logging in',
+      data: 'Password updated successfully.  Please try logging in',
     };
   } catch (error) {
     console.log(error);
-    throw error;
+    return { status: 'error', error: 'Something went wrong' };
   }
 }
 
-export async function completeSocialLoginProfile(data: ProfileSchema): Promise<ActionResult<string>> {
-  const session = await auth()
+export async function completeSocialLoginProfile(
+  data: ProfileSchema
+): Promise<ActionResult<string>> {
+  const session = await auth();
 
-  if (!session?.user) return {status: 'error', error: 'User not found'}
+  if (!session?.user) return { status: 'error', error: 'User not found' };
 
   try {
     const user = await prisma.user.update({
-      where: {id: session.user.id},
+      where: { id: session.user.id },
       data: {
         profileComplete: true,
         member: {
@@ -269,31 +271,31 @@ export async function completeSocialLoginProfile(data: ProfileSchema): Promise<A
             description: data.description,
             city: data.city,
             country: data.country,
-          }
-        }
+          },
+        },
       },
       select: {
         accounts: {
           select: {
             provider: true,
-          }
-        }
-      }
-    })
+          },
+        },
+      },
+    });
 
-    return {status: 'success', data: user.accounts[0].provider}
+    return { status: 'success', data: user.accounts[0].provider };
   } catch (error) {
-    console.log(error)
-    throw error
+    console.log(error);
+    throw error;
   }
 }
 
 export async function getUserRole() {
-  const session = await auth()
+  const session = await auth();
 
   const role = session?.user.role;
 
-  if (!role) throw new Error('Not in role')
+  if (!role) throw new Error('Not in role');
 
   return role;
 }

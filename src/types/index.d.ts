@@ -48,12 +48,12 @@ type PagingParams = {
 type PagingResult = {
   totalPages: number;
   totalCount: number;
-} & PagingParams
+} & PagingParams;
 
 type PaginatedResponse<T> = {
   items: T[];
   totalCount: number;
-}
+};
 
 type GetMemberParams = {
   ageRange?: string;
@@ -62,4 +62,4 @@ type GetMemberParams = {
   pageSize?: string;
   orderBy?: string;
   withPhoto?: string;
-}
+};

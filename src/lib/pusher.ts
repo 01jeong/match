@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 import PusherServer from 'pusher'
 import PusherClient from 'pusher-js'
 

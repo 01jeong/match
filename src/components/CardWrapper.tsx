@@ -2,8 +2,8 @@ import {
   Card,
   CardHeader,
   CardBody,
-  Button,
   CardFooter,
+  Button,
 } from '@nextui-org/react';
 import { ReactNode } from 'react';
 import { IconType } from 'react-icons/lib';
@@ -42,7 +42,7 @@ export default function CardWrapper({
           </div>
         </CardHeader>
         {body && <CardBody>{body}</CardBody>}
-        <CardFooter>
+        <CardFooter className="flex flex-col justify-center">
           {action && (
             <Button
               onPress={action}

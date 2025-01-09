@@ -23,10 +23,7 @@ export default async function VerifyEmailPage({
           </div>
         </div>
       }
-      footer={
-        <ResultMessage result={result}/>
-      }
+      footer={<ResultMessage result={result} />}
     />
   );
 }
-
